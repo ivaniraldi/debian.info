@@ -10,7 +10,14 @@ sudo apt update && sudo apt upgrade -y
 # 🔧 Instalar paquetes esenciales
 sudo apt install -y \
     zsh curl wget git htop micro unzip fonts-powerline \
-    build-essential software-properties-common
+    build-essential software-properties-common nginx certbot python3-certbot-nginx
+
+# 🔥 Instalar Node.js y NPM
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+sudo apt install -y nodejs
+
+# 🔥 Instalar PM2 globalmente
+sudo npm install -g pm2
 
 # 🔥 Instalar Oh My Zsh
 if [ ! -d "$HOME/.oh-my-zsh" ]; then
@@ -88,7 +95,38 @@ EOF
 # 🔥 Cambiar shell por defecto a ZSH
 chsh -s $(which zsh)
 
+# 🔥 Configurar NGINX (modo básico)
+echo "➡️ Configurando NGINX..."
+sudo systemctl enable nginx
+sudo systemctl start nginx
+
+# 🔥 Crear archivo de configuración ejemplo
+sudo tee /etc/nginx/sites-available/default > /dev/null <<'EOL'
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+
+    server_name _;
+
+    root /var/www/html;
+    index index.html index.htm;
+
+    location / {
+        try_files $uri $uri/ =404;
+    }
+}
+EOL
+
+sudo nginx -t && sudo systemctl reload nginx
+
+# 🔥 Instalar Certbot y HTTPS (opcional)
+# sudo certbot --nginx --redirect --agree-tos -m tu-email@dominio.com -d tudominio.com
+
+# 🔥 Configurar PM2 para ejecución 24/7
+pm2 startup systemd -u $USER --hp $HOME
+pm2 save
+
 # ✅ Final
 echo "✅ Instalación completada."
-echo "🔔 Por favor, cambia la fuente de tu terminal a 'BigBlueTerminal Nerd Font' para ver los íconos correctamente."
-echo "🎉 Disfruta de tu Debian minimalista y hermoso."
+echo "🔔 Cambia la fuente de tu terminal a 'BigBlueTerminal Nerd Font' para que se vea increíble."
+echo "🎉 Tu servidor Debian está listo para producir magia."
