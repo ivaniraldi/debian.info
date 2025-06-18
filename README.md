@@ -30,6 +30,9 @@ curl -sSL https://raw.githubusercontent.com/tuusuario/tu-repo/main/setup-debian.
 | **HTOP**                          | Monitor de recursos visual e interactivo.                |
 | **Neofetch**                      | Muestra info del sistema cada vez que abres la terminal. |
 | **BigBlueTerminal Nerd Font**     | Fuente con íconos para que todo se vea hermoso.          |
+| **Node.js + NPM**                 | Entorno JavaScript backend listo para desarrollo.        |
+| **PM2**                           | Gestor de procesos Node para correr apps 24/7.           |
+| **NGINX + Certbot**               | Servidor web con HTTPS automático y seguro.              |
 
 ---
 
@@ -44,169 +47,79 @@ Esto es esencial para que veas correctamente los íconos y el prompt estilizado.
 
 ---
 
-# 🗺️ **Mapa de Comandos Útiles e Instalados**
+## 🌐 **Configuración de NGINX + Certbot (HTTPS)**
 
----
-
-## 🔥 Comandos Básicos del Sistema
-
-| Comando                 | Función                                          |
-| ----------------------- | ------------------------------------------------ |
-| `ls`                    | Lista archivos (con íconos gracias a LSD).       |
-| `ll`                    | Lista detallada (`lsd -l`).                      |
-| `la`                    | Lista todos, incluidos ocultos (`lsd -la`).      |
-| `cd <ruta>`             | Cambiar de directorio.                           |
-| `pwd`                   | Mostrar ruta actual.                             |
-| `mkdir <nombre>`        | Crear carpeta.                                   |
-| `rm <archivo>`          | Borrar archivo.                                  |
-| `rm -r <carpeta>`       | Borrar carpeta completa.                         |
-| `cp <origen> <destino>` | Copiar archivos o carpetas (`-r` para carpetas). |
-| `mv <origen> <destino>` | Mover o renombrar archivos.                      |
-| `touch <archivo>`       | Crear archivo vacío.                             |
-| `clear` o `Ctrl + L`    | Limpiar pantalla.                                |
-
----
-
-## 📂 Navegación con NNN (Navegador de Archivos en Terminal)
-
-| Tecla   | Acción                           |
-| ------- | -------------------------------- |
-| `→`     | Entrar en carpeta                |
-| `←`     | Salir de carpeta                 |
-| `Enter` | Abrir archivo                    |
-| `Space` | Marcar archivo                   |
-| `d`     | Borrar archivo                   |
-| `!`     | Abrir terminal dentro de la ruta |
-| `q`     | Salir                            |
-
-🔗 Corre con:
+### Instalación:
 
 ```bash
-n
+sudo apt install -y nginx certbot python3-certbot-nginx
+```
+
+### Comandos básicos:
+
+| Comando                        | Descripción                           |
+| ------------------------------ | ------------------------------------- |
+| `sudo systemctl start nginx`   | Iniciar servidor NGINX                |
+| `sudo systemctl enable nginx`  | Habilitar inicio automático           |
+| `sudo systemctl restart nginx` | Reiniciar NGINX                       |
+| `sudo nginx -t`                | Probar configuración nginx            |
+| `sudo ufw allow 'Nginx Full'`  | Abrir puertos HTTP (80) y HTTPS (443) |
+
+### Crear certificado SSL:
+
+```bash
+sudo certbot --nginx -d midominio.com -d www.midominio.com
+```
+
+### Renovación automática (ya está configurada por default):
+
+```bash
+sudo certbot renew --dry-run
+```
+
+Archivos de configuración NGINX:
+
+```bash
+/etc/nginx/sites-available/
+/etc/nginx/sites-enabled/
 ```
 
 ---
 
-## ✍️ Edición con Micro (Editor amigable)
+## ⚙️ **Gestor de Procesos con PM2 (Apps Node.js 24/7)**
 
-| Comando / Tecla | Función          |
-| --------------- | ---------------- |
-| `Ctrl + S`      | Guardar          |
-| `Ctrl + Q`      | Salir            |
-| `Ctrl + K`      | Cortar línea     |
-| `Ctrl + U`      | Pegar            |
-| `Ctrl + F`      | Buscar           |
-| `Ctrl + H`      | Reemplazar       |
-| `Ctrl + E`      | Menú de comandos |
-
-🔗 Corre con:
+### Instalación:
 
 ```bash
-edit <archivo>
+sudo npm install -g pm2
 ```
 
----
+### Comandos básicos:
 
-## 🧠 Información del Sistema
-
-```bash
-neofetch
-```
-
-Muestra info del sistema en forma visual (hostname, RAM, CPU, etc.).
-
----
-
-## 🚥 Monitor de Recursos
-
-```bash
-htop
-```
-
-| Tecla | Función                |
-| ----- | ---------------------- |
-| `F9`  | Matar proceso          |
-| `F6`  | Cambiar columnas orden |
-| `F3`  | Buscar proceso         |
-| `F10` | Salir                  |
-
----
-
-## 🔧 Gestión de Paquetes
-
-| Comando                      | Función                         |
-| ---------------------------- | ------------------------------- |
-| `sudo apt update`            | Actualizar repositorios         |
-| `sudo apt upgrade -y`        | Instalar actualizaciones        |
-| `sudo apt install <paquete>` | Instalar un paquete             |
-| `sudo apt remove <paquete>`  | Desinstalar paquete             |
-| `sudo apt autoremove -y`     | Eliminar dependencias sobrantes |
-| `sudo apt clean`             | Limpiar caché de paquetes       |
-
----
-
-## 🌐 Comandos de Red
-
-| Comando            | Función                                 |
+| Comando            | Descripción                             |
 | ------------------ | --------------------------------------- |
-| `ping google.com`  | Verificar conectividad                  |
-| `curl ifconfig.me` | Mostrar IP pública                      |
-| `ss -tuln`         | Ver puertos abiertos                    |
-| `sudo ufw status`  | Estado del firewall (si está instalado) |
-| `wget <url>`       | Descargar archivo desde URL             |
+| `pm2 start app.js` | Ejecutar app Node                       |
+| `pm2 list`         | Ver procesos activos                    |
+| `pm2 stop app`     | Detener proceso                         |
+| `pm2 restart app`  | Reiniciar app                           |
+| `pm2 delete app`   | Eliminar proceso                        |
+| `pm2 logs`         | Ver logs en tiempo real                 |
+| `pm2 save`         | Guardar procesos para inicio automático |
+| `pm2 startup`      | Generar script para boot del sistema    |
 
----
-
-## 🛑 Gestión de Procesos
-
-| Comando         | Función                     |                 |
-| --------------- | --------------------------- | --------------- |
-| \`ps aux        | grep <nombre>\`             | Buscar procesos |
-| `kill <PID>`    | Terminar proceso            |                 |
-| `kill -9 <PID>` | Forzar terminación          |                 |
-| `htop`          | Monitor gráfico de procesos |                 |
-
----
-
-## 🗂️ Gestión de Archivos Comprimidos
-
-| Comando                            | Función                      |
-| ---------------------------------- | ---------------------------- |
-| `tar -czvf archivo.tar.gz carpeta` | Comprimir carpeta            |
-| `tar -xzvf archivo.tar.gz`         | Descomprimir archivo .tar.gz |
-| `unzip archivo.zip`                | Descomprimir archivo .zip    |
-| `zip archivo.zip carpeta`          | Comprimir carpeta en .zip    |
-
----
-
-## 🔥 Aliases configurados
-
-| Alias  | Equivalente | Función                      |
-| ------ | ----------- | ---------------------------- |
-| `ls`   | `lsd`       | Listar con íconos            |
-| `ll`   | `lsd -l`    | Listar detallado             |
-| `la`   | `lsd -la`   | Listar todo, incluso ocultos |
-| `n`    | `nnn`       | Navegador de archivos        |
-| `edit` | `micro`     | Editor de texto amigable     |
-| `..`   | `cd ..`     | Subir un nivel               |
-| `...`  | `cd ../..`  | Subir dos niveles            |
-
----
-
-# 🌟 **Bonus Opcional: tmux (Multiplexor de Terminal)**
+### Activar PM2 como servicio permanente:
 
 ```bash
-sudo apt install -y tmux
+pm2 startup
+pm2 save
 ```
 
-| Comando              | Acción                       |
-| -------------------- | ---------------------------- |
-| `tmux`               | Iniciar nueva sesión         |
-| `Ctrl + b` luego `c` | Nueva ventana dentro de tmux |
-| `Ctrl + b` luego `n` | Siguiente ventana            |
-| `Ctrl + b` luego `p` | Ventana anterior             |
-| `Ctrl + b` luego `d` | Desconectarse (sin cerrar)   |
-| `tmux attach`        | Volver a sesión desconectada |
+Salida esperada:
+
+```bash
+brasil.service → /etc/systemd/system/pm2-webrushbrasil.service.
+[PM2] [v] Command successfully executed.
+```
 
 ---
 
@@ -215,6 +128,8 @@ sudo apt install -y tmux
 * ✅ Debian ultra liviano.
 * ✅ Terminal estética y moderna.
 * ✅ Productividad máxima desde consola.
+* ✅ HTTPS con NGINX + Certbot.
+* ✅ Apps Node.js corriendo 24/7 con PM2.
 * ✅ Consumo mínimo de recursos (ideal 1GB RAM o menos).
 
 ---
@@ -233,3 +148,4 @@ sudo apt install -y tmux
 MIT — Uso libre, mejoralo, rompenos el Debian si quieres 🔥
 
 ---
+
